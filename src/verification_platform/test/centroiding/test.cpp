@@ -15,41 +15,16 @@
 #include "test.h"
 
 using namespace std;
-using namespace uvm;
-using namespace sc_core;
+using namespace cv;
 
-test_centroiding::test_centroiding( uvm_component_name name )
-    : test_base( name )
-{// constructor
-}
-
-void test_centroiding::overrides()
+void TestCentroiding::scoreboard(std_str::Sky sky_in, std_str::Sky sky_out)
 {
-    set_type_override_by_type(scoreboard_base::get_type(),scoreboard_centroiding::get_type());
+    acc.compare_data(sky_in, sky_out);
+    // imshow("Image", sky_out.image);
+    // waitKey(0);
 }
 
-void test_centroiding::run_phase( uvm_phase& phase ){
-    (void)phase;
-    // UVM_INFO( get_name(), "** UVM TEST STARTED **", UVM_NONE );
-    cout << endl;
-}
-
-void test_centroiding::report_phase(uvm_phase& phase ){
-    (void)phase;
-    scoreboard_centroiding *scoreboard = (scoreboard_centroiding*)tb->scoreboard0;
-
-    cout << endl;
-    cout << "total          = " << scoreboard->acc.total_acc                               << endl;
-    cout << "identified     = " << scoreboard->acc.identified_acc                          << endl;
-    cout << "correct        = " << scoreboard->acc.correct_acc                             << endl;
-    cout << "error std      = " << scoreboard->acc.error_acc / scoreboard->acc.correct_acc << endl;
-    cout << "total time (s) = " << scoreboard->acc.time_acc                                << endl;
-    cout << endl;
-
-    if ( test_end ){
-        // UVM_INFO( get_name(), "** UVM TEST PASSED **", UVM_NONE );
-        sc_stop();
-    }
-    else
-        UVM_ERROR( get_name(), "** UVM TEST FAILED **" );
+void TestCentroiding::report()
+{
+    acc.print();
 }

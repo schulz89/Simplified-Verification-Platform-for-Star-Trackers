@@ -1,6 +1,6 @@
-# Verification Platform for Star Trackers
+# Simplified Verification Platform for Star Trackers
 
-This is a verification platform for testing star tracker algorithms, based on UVM-SystemC.  
+This is a verification platform for testing star tracker algorithms, based on UVM-SystemC, but with the aim to minimize the dependencies compared to the original project.
 The code is currently under development.
 
 ## Compiling and running
@@ -36,9 +36,6 @@ Then, running the tests can be done with:
 * Atlas 3.10.3
 * Blas 3.9.0
 * Boost 1.74.0.3
-* SystemC 2.3.3
-* UVM-SystemC 1.0b2
-* GHDL-mcode 1.0.0
 * Python 3.9.2
 * NumPy  1.19.5 (for Python 3)
 * Matplotlib 3.3.4 (for Python 3)

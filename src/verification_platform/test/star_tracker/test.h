@@ -15,24 +15,27 @@
 #ifndef TEST_STAR_TRACKER_H_
 #define TEST_STAR_TRACKER_H_
 
-#include <systemc>
-#include <tlm>
-#include <uvm>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <sys/stat.h>
 
-#include "uvm/test.h"
-#include "test/star_tracker/sequence.h"
-#include "test/star_tracker/scoreboard.h"
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 
-class test_star_tracker : public test_base {
+#include "standard_structures.h"
+#include "test/common/scoreboard_common.h"
+
+class TestStarTracker {
 
 public:
-    test_star_tracker( uvm::uvm_component_name name );
-
-    UVM_COMPONENT_UTILS(test_star_tracker)
-
-    virtual void overrides();
-    virtual void run_phase( uvm::uvm_phase &phase );
-    virtual void report_phase( uvm::uvm_phase& phase );
+    TestStarTracker();
+    SBCentroiding acc_centr;
+    SBStarId      acc_starid;
+    SBAttitude    acc_att;
+    void scoreboard(std_str::Sky sky_in, std_str::Sky sky_out);
+    void report();
+    std::ofstream *ofs;
 };
 
 #endif /* TEST_STAR_TRACKER_H_ */

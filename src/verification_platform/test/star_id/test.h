@@ -15,24 +15,25 @@
 #ifndef TEST_STAR_ID_H
 #define TEST_STAR_ID_H
 
-#include <systemc>
-#include <tlm>
-#include <uvm>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <sys/stat.h>
 
-#include "uvm/test.h"
-#include "test/star_id/sequence.h"
-#include "test/star_id/scoreboard.h"
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 
-class test_star_id : public test_base {
+#include "standard_structures.h"
+#include "test/common/scoreboard_common.h"
+
+class TestStarID {
 
 public:
-    test_star_id( uvm::uvm_component_name name );
-
-    UVM_COMPONENT_UTILS(test_star_id)
-
-    virtual void overrides();
-    virtual void run_phase( uvm::uvm_phase &phase );
-    virtual void report_phase( uvm::uvm_phase& phase );
+    TestStarID();
+    SBStarId acc;
+    void scoreboard(std_str::Sky sky_in, std_str::Sky sky_out);
+    void report();
+    std::ofstream *ofs;
 };
 
 #endif // TEST_STAR_ID_H

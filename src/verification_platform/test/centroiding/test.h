@@ -15,24 +15,18 @@
 #ifndef TEST_CENTROIDING_H_
 #define TEST_CENTROIDING_H_
 
-#include <systemc>
-#include <tlm>
-#include <uvm>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 
-#include "uvm/test.h"
-#include "test/centroiding/sequence.h"
-#include "test/centroiding/scoreboard.h"
+#include "standard_structures.h"
+#include "test/common/scoreboard_common.h"
 
-class test_centroiding : public test_base {
+class TestCentroiding {
 
 public:
-    test_centroiding( uvm::uvm_component_name name );
-
-    UVM_COMPONENT_UTILS(test_centroiding)
-
-    virtual void overrides();
-    virtual void run_phase( uvm::uvm_phase &phase );
-    virtual void report_phase( uvm::uvm_phase& phase );
+    SBCentroiding acc;
+    void scoreboard(std_str::Sky sky_in, std_str::Sky sky_out);
+    void report();
 };
 
 #endif /* TEST_CENTROIDING_H_ */

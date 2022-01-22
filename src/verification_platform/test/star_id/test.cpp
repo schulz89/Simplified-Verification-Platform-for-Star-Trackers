@@ -15,40 +15,32 @@
 #include "test.h"
 
 using namespace std;
-using namespace uvm;
-using namespace sc_core;
+using namespace cv;
+using namespace std_str;
 
-test_star_id::test_star_id( uvm_component_name name )
-    : test_base( name )
-{// constructor
-}
-
-void test_star_id::overrides()
+TestStarID::TestStarID()
 {
-    set_type_override_by_type(scoreboard_base::get_type(),scoreboard_star_id::get_type());
+    string directory, filename;
+    FileStorage fs("config/common.yml", FileStorage::READ);
+    fs["vp_output_directory"] >> directory;
+    fs["vp_output_filename"]  >> filename;
+    fs.release();
+
+    mkdir(directory.c_str(), S_IRWXU|S_IRWXG|S_IROTH|S_IXOTH);
+    filename = directory + "/" + filename;
+    ofs = new ofstream(filename,ofstream::out);
+    
+    *ofs << "%" << "Correct" << "\t" << "Identified" << "\t" << "Total" << "\t" << "Time (s)" << endl;
 }
 
-void test_star_id::run_phase( uvm_phase& phase ){
-    (void)phase;
-    // UVM_INFO( get_name(), "** UVM TEST STARTED **", UVM_NONE );
-    cout << endl;
+void TestStarID::scoreboard(Sky sky_in, Sky sky_out)
+{
+    acc.compare_data(sky_in, sky_out);
+    *ofs << acc.correct << "\t" << acc.identified << "\t" << acc.total << "\t" << acc.time<< endl;
+    // imshow("Image", sky_out.image);
+    // waitKey(0);
 }
 
-void test_star_id::report_phase(uvm_phase& phase ){
-    (void)phase;
-    scoreboard_star_id *scoreboard = (scoreboard_star_id*)tb->scoreboard0;
-
-    cout << endl;
-    cout << "total            = " << scoreboard->acc.total_acc                                        << endl;
-    cout << "identified ratio = " << (double)scoreboard->acc.identified_acc/scoreboard->acc.total_acc << endl;
-    cout << "correct ratio    = " << (double)scoreboard->acc.correct_acc/scoreboard->acc.total_acc    << endl;
-    cout << "total time (s)   = " << scoreboard->acc.time_acc                                         << endl;
-    cout << endl;
-
-    if ( test_end ){
-        // UVM_INFO( get_name(), "** UVM TEST PASSED **", UVM_NONE );
-        sc_stop();
-    }
-    else
-        UVM_ERROR( get_name(), "** UVM TEST FAILED **" );
+void TestStarID::report(){
+    acc.print();
 }

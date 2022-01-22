@@ -13,108 +13,169 @@
 // limitations under the License.
 
 #include <iostream>
-#include <systemc>
-#include <tlm>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 
-#include "dut/centroiding_module.h"
-#include "dut/centroiding_vhdl_module.h"
-#include "dut/centroiding_cpp_module.h"
-#include "dut/star_identification_module.h"
-#include "dut/attitude_determination_module.h"
-#include "dut/star_tracker_module.h"
-#include "dut/tcp_wrapper_module.h"
+#include <chrono>
+#include <ctime>
 
-#include "uvm/test.h"
-#include "uvm/vip_if.h"
+#include "star_simulator/starsimulator.h"
+
+#include "dut/centroiding.h"
+#include "dut/star_identification.h"
+#include "dut/attitude_determination.h"
+
+#include "test/centroiding/test.h"
+#include "test/star_id/test.h"
+#include "test/star_tracker/test.h"
 
 using namespace std;
-using namespace sc_core;
-using namespace uvm;
+using namespace std::chrono;
+using namespace cv;
+using namespace std_str; // standard structure
+using namespace ssim;    // star simulator
 using namespace st;
 
-enum dut_t {CENTROIDING_REGION_GROWING, // 0
-            CENTROIDING_GABRIEL_CPP,    // 1
-            CENTROIDING_GABRIEL_VHDL,   // 2
-            STAR_ID_GRID,               // 3
-            ATTITUDE_DETERMINATION,     // 4
-            STAR_TRACKER,               // 5
-            TCP_WRAPPER};               // 6
+void process_centroiding(Sky& sky_in, Sky& sky_out);
+void process_star_identification(Sky& sky_in, Sky& sky_out);
+void process_attitude_determination(Sky& sky_in, Sky& sky_out);
 
-#define ENUM_DUT_T_SIZE 7
+enum dut_t { CENTROIDING_REGION_GROWING = 0, // 0
+    STAR_ID_GRID = 3,                        // 3
+    ATTITUDE_DETERMINATION = 4,              // 4
+    STAR_TRACKER = 5 };                      // 5
 
-enum test_t {TEST_CENTROIDING,          // 0
-             TEST_STAR_ID,              // 1
-             TEST_ATTITUDE,             // 2
-             TEST_STAR_TRACKER,         // 3
-             TEST_STAR_TRACKER_IMG};    // 4
+enum test_t { TEST_CENTROIDING, // 0
+    TEST_STAR_ID,               // 1
+    TEST_ATTITUDE,              // 2
+    TEST_STAR_TRACKER,          // 3
+    TEST_STAR_TRACKER_IMG };    // 4
 
-#define ENUM_TEST_T_SIZE 5
-
-int sc_main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
-    dut_t dut_sel   = STAR_TRACKER;
-    test_t test_sel = TEST_STAR_TRACKER;
+    dut_t dut_sel = CENTROIDING_REGION_GROWING;
+    test_t test_sel = TEST_CENTROIDING;
 
-    if(argc == 3){
-        dut_sel = (dut_t) atoi(argv[1]);
-        test_sel = (test_t) atoi(argv[2]);
+    if (argc == 3) {
+        dut_sel = (dut_t)atoi(argv[1]);
+        test_sel = (test_t)atoi(argv[2]);
+    } else {
+        cout << "Usage: verification_plarform [dut_id] [test_id]" << endl;
+        exit(1);
     }
 
-    if(dut_sel >= ENUM_DUT_T_SIZE)   exit(1);
-    if(test_sel >= ENUM_TEST_T_SIZE) exit(1);
+    double n_tests = 0;
+    cv::FileStorage fs("config/common.yml", cv::FileStorage::READ);
+    fs["vp_n_tests"] >> n_tests;
+    fs.release();
 
-    //uvm_config_db_options::turn_on_tracing();
+    StarSimulator ss;
+    Sky sky_in, sky_out;
 
-    // Create the interfaces and add them to the database.
-    vip_if *vip_if_in_1 = new vip_if;
-    vip_if *vip_if_out_1 = new vip_if;
-    uvm::uvm_config_db<vip_if*>::set(nullptr, "*", "vip_if_in_1", vip_if_in_1);
-    uvm::uvm_config_db<vip_if*>::set(nullptr, "*", "vip_if_out_1", vip_if_out_1);
+    TestCentroiding test_centroiding;
+    TestStarID test_star_id;
+    TestStarTracker test_star_tracker;
 
-    uvm_component *my_dut = nullptr;
+    for (int i = 0; i < (int)n_tests; i++) {
+        // Sequence
+        sky_in = ss.generate_sky();
 
-    switch (dut_sel) {
-    case CENTROIDING_REGION_GROWING: {
-        my_dut = new CentroidingModule("dut_centroiding", vip_if_in_1, vip_if_out_1);
-    } break;
-    case CENTROIDING_GABRIEL_CPP: {
-        my_dut = new centroiding_cpp_module("dut_centroiding_cpp", vip_if_in_1, vip_if_out_1);
-    } break;
-    case CENTROIDING_GABRIEL_VHDL: {
-        my_dut = new centroiding_vhdl_module("dut_centroiding_vhdl", vip_if_in_1, vip_if_out_1);
-    } break;
-    case STAR_ID_GRID: {
-        my_dut = new StarIdentificationModule("dut_star_id", vip_if_in_1, vip_if_out_1);
-    } break;
-    case ATTITUDE_DETERMINATION: {
-        my_dut = new AttitudeDeterminationModule("dut_attitude", vip_if_in_1, vip_if_out_1);
-    } break;
-    case STAR_TRACKER: {
-        my_dut = new StarTrackerModule("dut_star_tracker", vip_if_in_1, vip_if_out_1);
-    } break;
-    case TCP_WRAPPER: {
-        my_dut = new TcpWrapperModule("dut_tcp_wrapper", vip_if_in_1, vip_if_out_1);
-    } break;
+        // DUT
+        switch (dut_sel) {
+        case CENTROIDING_REGION_GROWING: {
+            process_centroiding(sky_in, sky_out);
+        } break;
+        case STAR_ID_GRID: {
+            ss.config.simulator_parameters.build_image = false;
+            process_star_identification(sky_in,sky_out);
+        } break;
+        case ATTITUDE_DETERMINATION: {
+            process_attitude_determination(sky_in,sky_out);
+        } break;
+        case STAR_TRACKER: {
+            process_centroiding(sky_in, sky_out);
+            process_star_identification(sky_out,sky_out);
+            process_attitude_determination(sky_out,sky_out);
+        } break;
+        default: {
+            cout << "Invalid dut." << endl;
+            exit(1);
+        } break;
+        }
+
+        // Scoreboard
+        switch (test_sel) {
+        case TEST_CENTROIDING: {
+            test_centroiding.scoreboard(sky_in, sky_out);
+        } break;
+        case TEST_STAR_ID: {
+            test_star_id.scoreboard(sky_in, sky_out);
+        } break;
+        case TEST_ATTITUDE: {
+        } break;
+        case TEST_STAR_TRACKER: {
+            test_star_tracker.scoreboard(sky_in, sky_out);
+        } break;
+        case TEST_STAR_TRACKER_IMG: {
+        } break;
+        default: {
+            cout << "Invalid test." << endl;
+            exit(1);
+        } break;
+        }
     }
 
+    // Test report
     switch (test_sel) {
-    case TEST_CENTROIDING : {
-        run_test("test_centroiding");
+    case TEST_CENTROIDING: {
+        test_centroiding.report();
     } break;
-    case TEST_STAR_ID : {
-        run_test("test_star_id");
+    case TEST_STAR_ID: {
+        test_star_id.report();
     } break;
-    case TEST_ATTITUDE : {
-        run_test("test_attitude");
+    case TEST_ATTITUDE: {
     } break;
-    case TEST_STAR_TRACKER : {
-        run_test("test_star_tracker");
+    case TEST_STAR_TRACKER: {
+        test_star_tracker.report();
     } break;
-    case TEST_STAR_TRACKER_IMG : {
-        run_test("test_star_tracker_img");
+    case TEST_STAR_TRACKER_IMG: {
+    } break;
+    default: {
+        cout << "Invalid test." << endl;
+        exit(1);
     } break;
     }
 
-    delete my_dut;
     return 0;
+}
+
+void process_centroiding(Sky& sky_in, Sky& sky_out)
+{
+    static Centroiding centroiding;
+    auto start = high_resolution_clock::now();
+    sky_out = centroiding.process(sky_in);
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed_seconds = end - start;
+    sky_out.time.push_back(elapsed_seconds.count());
+    sky_out.time.push_back(0.0);
+}
+
+void process_star_identification(Sky& sky_in, Sky& sky_out)
+{
+    static StarIdentification star_identification;
+    auto start = high_resolution_clock::now();
+    sky_out = star_identification.identifyStars(sky_in);
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed_seconds = end - start;
+    sky_out.time.push_back(elapsed_seconds.count());
+}
+
+void process_attitude_determination(Sky& sky_in, Sky& sky_out)
+{
+    static AttitudeDetermination attitude_determination;
+    auto start = high_resolution_clock::now();
+    sky_out = attitude_determination.process(sky_in);
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed_seconds = end - start;
+    sky_out.time.push_back(elapsed_seconds.count());
 }
