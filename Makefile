@@ -21,21 +21,17 @@ CXXFLAGS = "-pipe -Wall -W -fopenmp -O2 -I/usr/include/opencv4"
 
 $(shell mkdir -p $(BUILD_DIR))
 
-all: grid_database tcp_dut_client verification_platform
+all: grid_database verification_platform
 	mkdir -p $(BUILD_DIR)
 
 grid_database:
 	$(MAKE) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/grid_database
-
-tcp_dut_client:
-	$(MAKE) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/tcp_dut_client
 
 verification_platform:
 	$(MAKE) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/verification_platform
 
 clean:
 	$(MAKE) clean BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/grid_database
-	$(MAKE) clean BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/tcp_dut_client
 	$(MAKE) clean BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/verification_platform
 
 clean_data:

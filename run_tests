@@ -45,5 +45,11 @@ def repr():
                        ConfigDut(gp_alg_variation = "REFERENCE", dut_identifier="Na et al. 2009", gp_g = 40)]
     TestStarTrackerPositionRPR(config_common_list, config_dut_list)
 
-tests_batch()
-repr()
+def sim_validation():
+    config_common_list = [ConfigCommon(op_resolution = (874,738), op_vertical_fov = 9.6, sp_psf_C = 25000, op_max_mag = 7)]
+    config_dut_list = [ConfigDut(dut_name = "STAR_SIMULATOR_VALIDATION")]
+    SingleTest(config_common_list, config_dut_list, False)
+
+# tests_batch()
+# repr()
+sim_validation()

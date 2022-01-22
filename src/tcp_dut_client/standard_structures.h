@@ -1,1 +1,0 @@
-../verification_platform/standard_structures.h

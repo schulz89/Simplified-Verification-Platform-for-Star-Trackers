@@ -43,7 +43,8 @@ void process_attitude_determination(Sky& sky_in, Sky& sky_out);
 enum dut_t { CENTROIDING_REGION_GROWING = 0, // 0
     STAR_ID_GRID = 3,                        // 3
     ATTITUDE_DETERMINATION = 4,              // 4
-    STAR_TRACKER = 5 };                      // 5
+    STAR_TRACKER = 5,                        // 5
+    STAR_SIMULATOR_VALIDATION = 7 };         // 6
 
 enum test_t { TEST_CENTROIDING, // 0
     TEST_STAR_ID,               // 1
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
     dut_t dut_sel = CENTROIDING_REGION_GROWING;
     test_t test_sel = TEST_CENTROIDING;
 
-    if (argc == 3) {
+    if (argc >= 3) {
         dut_sel = (dut_t)atoi(argv[1]);
         test_sel = (test_t)atoi(argv[2]);
     } else {
@@ -77,26 +78,33 @@ int main(int argc, char* argv[])
     TestStarTracker test_star_tracker;
 
     for (int i = 0; i < (int)n_tests; i++) {
-        // Sequence
-        sky_in = ss.generate_sky();
-
         // DUT
         switch (dut_sel) {
         case CENTROIDING_REGION_GROWING: {
+            sky_in = ss.generate_sky(); // Sequence
             process_centroiding(sky_in, sky_out);
         } break;
         case STAR_ID_GRID: {
+            sky_in = ss.generate_sky();
             ss.config.simulator_parameters.build_image = false;
-            process_star_identification(sky_in,sky_out);
+            process_star_identification(sky_in, sky_out);
         } break;
         case ATTITUDE_DETERMINATION: {
-            process_attitude_determination(sky_in,sky_out);
+            sky_in = ss.generate_sky(); // Sequence
+            process_attitude_determination(sky_in, sky_out);
         } break;
         case STAR_TRACKER: {
+            sky_in = ss.generate_sky(); // Sequence
             process_centroiding(sky_in, sky_out);
-            process_star_identification(sky_out,sky_out);
-            process_attitude_determination(sky_out,sky_out);
+            process_star_identification(sky_out, sky_out);
+            process_attitude_determination(sky_out, sky_out);
         } break;
+        case STAR_SIMULATOR_VALIDATION: {
+            Quaternion q = {0.6834717599437533, {-0.7265912966832452, 0.06356850147638535, -0.029841021490484475}};
+            sky_in = ss.generate_sky(q); // Sequence
+            imshow("Generated image", sky_in.image); waitKey(0);
+            return(0);
+        }
         default: {
             cout << "Invalid dut." << endl;
             exit(1);

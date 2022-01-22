@@ -1,1 +1,0 @@
-../verification_platform/dut/src/star_identification.h

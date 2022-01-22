@@ -21,7 +21,8 @@ dut_t = {
     "STAR_ID_GRID"               : 3,
     "ATTITUDE_DETERMINATION"     : 4,
     "STAR_TRACKER"               : 5,
-    "TCP_WRAPPER"                : 6
+    "TCP_WRAPPER"                : 6,
+    "STAR_SIMULATOR_VALIDATION"  : 7
 }
 
 test_t = {

@@ -23,7 +23,7 @@ from config_dut import ConfigDut
 from definitions import test_t, dut_t, grid_t
 
 class SingleTest:  # Base class
-    def __init__(self, common_list = [ConfigCommon()], dut_list = [ConfigDut()]):
+    def __init__(self, common_list = [ConfigCommon()], dut_list = [ConfigDut()], record = True):
         os.makedirs("config", exist_ok=True)
         self.dut_list = copy.deepcopy(dut_list)
         self.common_list = copy.deepcopy(common_list)
@@ -33,9 +33,11 @@ class SingleTest:  # Base class
             self.parameters()
             if not self.exists(common, dut):
                 self.configure(self.common, self.dut)
-                self.run(self.common, self.dut)
-                self.save(self.common, self.dut)
-        self.plot()
+                self.run(self.common, self.dut, record)
+                if(record):
+                    self.save(self.common, self.dut)
+        if(record):
+            self.plot()
     def parameters (self):
         pass
     def delta_update(self, value):
@@ -48,13 +50,14 @@ class SingleTest:  # Base class
         common_config.generate_yml("config/common.yml")
         dut_config.generate_yml("config/dut.yml")
         subprocess.run(["bin/grid_database"])
-    def run(self, common_config, dut_config):
+    def run(self, common_config, dut_config, record):
         self.test_sel = test_t[common_config.test_name]
         self.dut_sel  = dut_t[dut_config.dut_name]
         #if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel)]) :
         if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) :
             exit()
-        self.data = np.genfromtxt("data/" + common_config.output_filename, comments="%", delimiter="\t")
+        if(record):
+            self.data = np.genfromtxt("data/" + common_config.output_filename, comments="%", delimiter="\t")
         # print("Data size:" + repr(np.size(self.data,axis=0)) + "x" + repr(np.size(self.data,axis=1)))
     def save(self, common_config, dut_config):
         directory_name = "data/" + common_config.test_identifier
