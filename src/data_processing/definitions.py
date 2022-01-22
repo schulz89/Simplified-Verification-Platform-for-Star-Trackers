@@ -41,3 +41,8 @@ grid_t = {
     "K"             : 4,
     "TREE"          : 5
 }
+
+sequence_t = {
+    "STAR_SIMULATOR" : 0,
+    "REAL_IMAGES"   : 1
+}

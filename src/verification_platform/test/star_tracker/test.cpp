@@ -92,7 +92,7 @@ void TestStarTracker::report()
     cout << "wrong attitude ratio            = " << (double)acc_att.wrong_acc / acc_att.total_acc << endl;
     cout << endl;
 
-    //    acc_centr.print();
-    //    acc_starid.print();
-    //    acc_att.print();
+    // acc_centr.print();
+    // acc_starid.print();
+    // acc_att.print();
 }

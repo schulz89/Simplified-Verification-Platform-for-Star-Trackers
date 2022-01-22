@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 import copy
 from config_common import ConfigCommon
 from config_dut import ConfigDut
-from definitions import test_t, dut_t, grid_t
+from definitions import test_t, dut_t, sequence_t
 
 class SingleTest:  # Base class
     def __init__(self, common_list = [ConfigCommon()], dut_list = [ConfigDut()], record = True):
@@ -53,8 +53,9 @@ class SingleTest:  # Base class
     def run(self, common_config, dut_config, record):
         self.test_sel = test_t[common_config.test_name]
         self.dut_sel  = dut_t[dut_config.dut_name]
-        #if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel)]) :
-        if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) :
+        self.sequence_sel = sequence_t[common_config.sequence_source]
+        if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel), str(self.sequence_sel)]) :
+        # if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.sequence_sel)]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) :
             exit()
         if(record):
             self.data = np.genfromtxt("data/" + common_config.output_filename, comments="%", delimiter="\t")

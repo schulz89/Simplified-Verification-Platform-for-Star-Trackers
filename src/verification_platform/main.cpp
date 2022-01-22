@@ -20,6 +20,7 @@
 #include <ctime>
 
 #include "star_simulator/starsimulator.h"
+#include "real_images/real_images.h"
 
 #include "dut/centroiding.h"
 #include "dut/star_identification.h"
@@ -40,26 +41,37 @@ void process_centroiding(Sky& sky_in, Sky& sky_out);
 void process_star_identification(Sky& sky_in, Sky& sky_out);
 void process_attitude_determination(Sky& sky_in, Sky& sky_out);
 
-enum dut_t { CENTROIDING_REGION_GROWING = 0, // 0
-    STAR_ID_GRID = 3,                        // 3
-    ATTITUDE_DETERMINATION = 4,              // 4
-    STAR_TRACKER = 5,                        // 5
-    STAR_SIMULATOR_VALIDATION = 7 };         // 6
+enum dut_t {
+    CENTROIDING_REGION_GROWING = 0, // 0
+    STAR_ID_GRID = 3,               // 3
+    ATTITUDE_DETERMINATION = 4,     // 4
+    STAR_TRACKER = 5,               // 5
+    STAR_SIMULATOR_VALIDATION = 7   // 7
+};
 
-enum test_t { TEST_CENTROIDING, // 0
-    TEST_STAR_ID,               // 1
-    TEST_ATTITUDE,              // 2
-    TEST_STAR_TRACKER,          // 3
-    TEST_STAR_TRACKER_IMG };    // 4
+enum test_t {
+    TEST_CENTROIDING,     // 0
+    TEST_STAR_ID,         // 1
+    TEST_ATTITUDE,        // 2
+    TEST_STAR_TRACKER,    // 3
+    TEST_STAR_TRACKER_IMG // 4
+};
+
+enum sequence_t {
+    STAR_SIMULATOR, // 0
+    REAL_IMAGES     // 1
+};
 
 int main(int argc, char* argv[])
 {
     dut_t dut_sel = CENTROIDING_REGION_GROWING;
     test_t test_sel = TEST_CENTROIDING;
+    sequence_t sequence_sel = STAR_SIMULATOR;
 
-    if (argc >= 3) {
+    if (argc == 4) {
         dut_sel = (dut_t)atoi(argv[1]);
         test_sel = (test_t)atoi(argv[2]);
+        sequence_sel = (sequence_t)atoi(argv[3]);
     } else {
         cout << "Usage: verification_plarform [dut_id] [test_id]" << endl;
         exit(1);
@@ -71,6 +83,7 @@ int main(int argc, char* argv[])
     fs.release();
 
     StarSimulator ss;
+    RealImages ri;
     Sky sky_in, sky_out;
 
     TestCentroiding test_centroiding;
@@ -81,12 +94,19 @@ int main(int argc, char* argv[])
         // DUT
         switch (dut_sel) {
         case CENTROIDING_REGION_GROWING: {
-            sky_in = ss.generate_sky(); // Sequence
+            // Sequence
+            if (sequence_sel == STAR_SIMULATOR) {
+                sky_in = ss.generate_sky();
+            } else if (sequence_sel == REAL_IMAGES) {
+                sky_in = ri.generate_sky();
+            } else {
+                return 1;
+            }
             process_centroiding(sky_in, sky_out);
         } break;
         case STAR_ID_GRID: {
-            sky_in = ss.generate_sky();
             ss.config.simulator_parameters.build_image = false;
+            sky_in = ss.generate_sky(); // Sequence
             process_star_identification(sky_in, sky_out);
         } break;
         case ATTITUDE_DETERMINATION: {
@@ -94,16 +114,23 @@ int main(int argc, char* argv[])
             process_attitude_determination(sky_in, sky_out);
         } break;
         case STAR_TRACKER: {
-            sky_in = ss.generate_sky(); // Sequence
+            // Sequence
+            if (sequence_sel == 0) {
+                sky_in = ss.generate_sky();
+            } else {
+                sky_in = ri.generate_sky();
+            }
             process_centroiding(sky_in, sky_out);
             process_star_identification(sky_out, sky_out);
             process_attitude_determination(sky_out, sky_out);
         } break;
         case STAR_SIMULATOR_VALIDATION: {
-            Quaternion q = {0.6834717599437533, {-0.7265912966832452, 0.06356850147638535, -0.029841021490484475}};
+            // Quaternion q = { 0.6834717599437533, { -0.7265912966832452, 0.06356850147638535, -0.029841021490484475 } };
+            Quaternion q = { 0.683248, { -0.72665, 0.0509266, -0.050578 } };
             sky_in = ss.generate_sky(q); // Sequence
-            imshow("Generated image", sky_in.image); waitKey(0);
-            return(0);
+            imshow("Generated image", sky_in.image);
+            waitKey(0);
+            return (0);
         }
         default: {
             cout << "Invalid dut." << endl;
@@ -145,6 +172,15 @@ int main(int argc, char* argv[])
     } break;
     case TEST_STAR_TRACKER: {
         test_star_tracker.report();
+        imshow("Image", sky_in.image);
+        waitKey(0);
+        imshow("Image", sky_out.image);
+        waitKey(0);
+        Sky new_sky = ss.generate_sky(sky_out.q);
+        imshow("Image", new_sky.image);
+        waitKey(0);
+        cout << sky_in.q.r << " " << sky_in.q.v[0] << "i " << sky_in.q.v[1] << "j " << sky_in.q.v[2] << "k" << endl;
+        cout << sky_out.q.r << " " << sky_out.q.v[0] << "i " << sky_out.q.v[1] << "j " << sky_out.q.v[2] << "k" << endl;
     } break;
     case TEST_STAR_TRACKER_IMG: {
     } break;

@@ -38,7 +38,7 @@ Centroiding::Centroiding()
     fs2["cp_max_px"]            >> dtmp; config.center_parameters.max = (int)dtmp;
     fs2["cp_huge"]              >> dtmp; config.center_parameters.huge = (int)dtmp;
     fs2.release();
-    config.draw = false;
+    config.draw = true;
 }
 
 Sky Centroiding::process(Sky csky)

@@ -1,3 +1,4 @@
+#!/usr/bin/env -S python3
 #!/usr/bin/env -S python3 -i
 
 # Copyright 2019 Victor Hugo Schulz
@@ -46,10 +47,16 @@ def repr():
     TestStarTrackerPositionRPR(config_common_list, config_dut_list)
 
 def sim_validation():
-    config_common_list = [ConfigCommon(op_resolution = (874,738), op_vertical_fov = 9.6, sp_psf_C = 25000, op_max_mag = 7)]
+    config_common_list = [ConfigCommon(op_resolution = (874,738), op_vertical_fov = 9.5, sp_psf_C = 25000, op_max_mag = 7)]
     config_dut_list = [ConfigDut(dut_name = "STAR_SIMULATOR_VALIDATION")]
+    SingleTest(config_common_list, config_dut_list, False)
+
+def real_images():
+    config_common_list = [ConfigCommon(sequence_source="REAL_IMAGES", op_resolution = (874,738), op_vertical_fov = 9.5, sp_psf_C = 25000, op_max_mag = 4.5)]
+    config_dut_list = [ConfigDut(dut_name = "STAR_TRACKER", cp_threshold=50, cp_relaxed_threshold=45, cp_min_px=5, gp_g=36)]
     SingleTest(config_common_list, config_dut_list, False)
 
 # tests_batch()
 # repr()
 sim_validation()
+real_images()

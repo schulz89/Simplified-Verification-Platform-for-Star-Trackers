@@ -21,6 +21,7 @@ from dataclasses import dataclass
 @dataclass
 class ConfigCommon:
     test_name        : str = "STAR_TRACKER"
+    sequence_source  : str = "STAR_SIMULATOR"
     test_identifier  : str = "Generic Test"
     x_axis_name      : str = "x"
     y_axis_name      : str = "y"
