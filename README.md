@@ -32,13 +32,19 @@ Then, running the tests can be done with:
 
 ## List of dependencies
 
-* OpenCV 4.5.1 (including python 3)
-* Atlas 3.10.3
-* Blas 3.9.0
-* Boost 1.74.0.3
-* Python 3.9.2
-* NumPy  1.19.5 (for Python 3)
-* Matplotlib 3.3.4 (for Python 3)
+* OpenCV (including Python)
+* Atlas
+* Blas
+* Boost
+* Python
+* NumPy (for Python)
+* Matplotlib (for Python)
+
+Example of command line for installing on Fedora Linux:
+
+```
+sudo dnf install opencv-devel python3-opencv atlas atlas-devel openblas blas-devel lapack-devel boost-devel python3-numpy python3-matplotlib
+```
 
 ## License
 
