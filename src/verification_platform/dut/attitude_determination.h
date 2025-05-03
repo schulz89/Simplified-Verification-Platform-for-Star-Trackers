@@ -22,7 +22,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 extern "C" {
 #include <cblas.h>
-#include <clapack.h>
+#include <atlas-x86_64-base/clapack.h>
 }
 
 #include "structures_st.h"
