@@ -172,15 +172,6 @@ int main(int argc, char* argv[])
     } break;
     case TEST_STAR_TRACKER: {
         test_star_tracker.report();
-        imshow("Image", sky_in.image);
-        waitKey(0);
-        imshow("Image", sky_out.image);
-        waitKey(0);
-        Sky new_sky = ss.generate_sky(sky_out.q);
-        imshow("Image", new_sky.image);
-        waitKey(0);
-        cout << sky_in.q.r << " " << sky_in.q.v[0] << "i " << sky_in.q.v[1] << "j " << sky_in.q.v[2] << "k" << endl;
-        cout << sky_out.q.r << " " << sky_out.q.v[0] << "i " << sky_out.q.v[1] << "j " << sky_out.q.v[2] << "k" << endl;
     } break;
     case TEST_STAR_TRACKER_IMG: {
     } break;

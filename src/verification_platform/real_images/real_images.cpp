@@ -26,7 +26,7 @@ RealImages::RealImages()
 
 Sky RealImages::generate_sky()
 { // Generate a sky configuration from image
-    string filename = "/home/schulz/Pictures/asteria_nasa_orion.png";
+    string filename = "asteria_nasa_orion.jpeg";
     Sky output;
     Mat image_color = cv::imread(filename);
     cvtColor(image_color, output.image, COLOR_BGR2GRAY);

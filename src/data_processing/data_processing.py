@@ -54,6 +54,7 @@ class SingleTest:  # Base class
         self.test_sel = test_t[common_config.test_name]
         self.dut_sel  = dut_t[dut_config.dut_name]
         self.sequence_sel = sequence_t[common_config.sequence_source]
+        print("Call: bin/verification_platform " + str(self.dut_sel) + " " + str(self.test_sel) + " " + str(self.sequence_sel))
         if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel), str(self.sequence_sel)]) :
         # if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.sequence_sel)]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) :
             exit()
@@ -89,7 +90,7 @@ class MultipleTests(SingleTest): # Base class
         filename_x = directory_name + "/" + dut_config.dut_identifier + "_x.npy"
         filename_y = directory_name + "/" + dut_config.dut_identifier + "_y.npy"
         return os.path.isfile(filename_x) and os.path.isfile(filename_y) # If the files already exists, skip test
-    def run(self, common_config, dut_config):
+    def run(self, common_config, dut_config, record):
         start = common_config.start
         end = common_config.end
         steps = common_config.steps
@@ -97,7 +98,7 @@ class MultipleTests(SingleTest): # Base class
         self.y = np.empty(steps)
         for i in range(0,steps) :
             self.delta_update(self.x[i])
-            super().run(common_config, dut_config)
+            super().run(common_config, dut_config, record)
             total = np.size(self.data,axis=0)
             acc = np.sum(self.data,axis=0)
             self.y[i] = acc[4]/total

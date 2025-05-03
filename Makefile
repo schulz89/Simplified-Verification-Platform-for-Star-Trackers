@@ -17,7 +17,7 @@ CXX = "ccache g++"
 # CXX = "ccache clang++"
 
 CXXFLAGS = "-pipe -Wall -W -fopenmp -O2 -I/usr/include/opencv4"
-# CXXFLAGS = "-pipe -Wall -W -g"
+#CXXFLAGS = "-pipe -Wall -W -fopenmp -O2 -I/usr/include/opencv4 -g"
 
 $(shell mkdir -p $(BUILD_DIR))
 

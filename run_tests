@@ -56,7 +56,7 @@ def real_images():
     config_dut_list = [ConfigDut(dut_name = "STAR_TRACKER", cp_threshold=50, cp_relaxed_threshold=45, cp_min_px=5, gp_g=36)]
     SingleTest(config_common_list, config_dut_list, False)
 
-# tests_batch()
-# repr()
+tests_batch()
+repr()
 sim_validation()
 real_images()
