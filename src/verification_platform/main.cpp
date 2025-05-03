@@ -30,12 +30,15 @@
 #include "test/star_id/test.h"
 #include "test/star_tracker/test.h"
 
+#include <boost/qvm/all.hpp>
+
 using namespace std;
 using namespace std::chrono;
 using namespace cv;
 using namespace std_str; // standard structure
 using namespace ssim;    // star simulator
 using namespace st;
+using namespace boost::qvm;
 
 void process_centroiding(Sky& sky_in, Sky& sky_out);
 void process_star_identification(Sky& sky_in, Sky& sky_out);
@@ -59,7 +62,8 @@ enum test_t {
 
 enum sequence_t {
     STAR_SIMULATOR, // 0
-    REAL_IMAGES     // 1
+    ASTERIA,        // 1
+    SWARM           // 2
 };
 
 int main(int argc, char* argv[])
@@ -97,8 +101,10 @@ int main(int argc, char* argv[])
             // Sequence
             if (sequence_sel == STAR_SIMULATOR) {
                 sky_in = ss.generate_sky();
-            } else if (sequence_sel == REAL_IMAGES) {
-                sky_in = ri.generate_sky();
+            } else if (sequence_sel == ASTERIA) {
+                sky_in = ri.asteria();
+            } else if (sequence_sel == SWARM) {
+                sky_in = ri.swarm();
             } else {
                 return 1;
             }
@@ -115,10 +121,12 @@ int main(int argc, char* argv[])
         } break;
         case STAR_TRACKER: {
             // Sequence
-            if (sequence_sel == 0) {
+            if (sequence_sel == STAR_SIMULATOR) {
                 sky_in = ss.generate_sky();
-            } else {
-                sky_in = ri.generate_sky();
+            } else if (sequence_sel == ASTERIA) {
+                sky_in = ri.asteria();
+            } else if (sequence_sel == SWARM) {
+                sky_in = ri.swarm();
             }
             process_centroiding(sky_in, sky_out);
             process_star_identification(sky_out, sky_out);
@@ -127,6 +135,7 @@ int main(int argc, char* argv[])
         case STAR_SIMULATOR_VALIDATION: {
             // Quaternion q = { 0.6834717599437533, { -0.7265912966832452, 0.06356850147638535, -0.029841021490484475 } };
             Quaternion q = { 0.683248, { -0.72665, 0.0509266, -0.050578 } };
+            // Quaternion q = { 0.6851, { -0.7209, 0.1044, 0 } };
             sky_in = ss.generate_sky(q); // Sequence
             imshow("Generated image", sky_in.image);
             waitKey(0);
@@ -150,6 +159,22 @@ int main(int argc, char* argv[])
         } break;
         case TEST_STAR_TRACKER: {
             test_star_tracker.scoreboard(sky_in, sky_out);
+            // cout << sky_in.q.r << " " << sky_in.q.v[0] << "i " << sky_in.q.v[1] << "j " << sky_in.q.v[2] << "k" << endl;
+            cout << sky_out.q.r << " " << sky_out.q.v[0] << "i " << sky_out.q.v[1] << "j " << sky_out.q.v[2] << "k" << endl;
+            imshow("Image", sky_in.image);
+            waitKey(0);
+            imshow("Image", sky_out.image);
+            waitKey(0);
+            quat<double> q_boost;
+            memcpy(q_boost.a,&sky_out.q,sizeof(sky_out.q));
+            if(mag(q_boost) > 0){
+                Sky new_sky = ss.generate_sky(sky_out.q);
+                imshow("Image", new_sky.image);
+                waitKey(0);
+            }
+            else{
+                cout << "Magnitude of q = 0, skipping generating sky from simulator." << endl;
+            }
         } break;
         case TEST_STAR_TRACKER_IMG: {
         } break;
@@ -172,15 +197,6 @@ int main(int argc, char* argv[])
     } break;
     case TEST_STAR_TRACKER: {
         test_star_tracker.report();
-        imshow("Image", sky_in.image);
-        waitKey(0);
-        imshow("Image", sky_out.image);
-        waitKey(0);
-        Sky new_sky = ss.generate_sky(sky_out.q);
-        imshow("Image", new_sky.image);
-        waitKey(0);
-        cout << sky_in.q.r << " " << sky_in.q.v[0] << "i " << sky_in.q.v[1] << "j " << sky_in.q.v[2] << "k" << endl;
-        cout << sky_out.q.r << " " << sky_out.q.v[0] << "i " << sky_out.q.v[1] << "j " << sky_out.q.v[2] << "k" << endl;
     } break;
     case TEST_STAR_TRACKER_IMG: {
     } break;

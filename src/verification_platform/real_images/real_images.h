@@ -25,11 +25,11 @@
 
 namespace ssim {
 
-class RealImages
-{
+class RealImages {
 public:
     RealImages();
-    std_str::Sky generate_sky ();
+    std_str::Sky asteria();
+    std_str::Sky swarm();
 };
 
 }

@@ -38,7 +38,7 @@ class ConfigCommon:
     # Virtual camera optical parameters
     op_resolution   :tuple = (800, 600)         # pixels
     op_vertical_fov :int   = 8                  # degrees
-    op_pixel_size   :tuple = (2.8e-6, 2.8e-6) # meters
+    op_pixel_size   :tuple = (2.8e-6, 2.8e-6)   # meters
     op_max_mag      :int   = 6                  # mag
     op_dist_coeffs  :tuple = (0, 0, 0, 0, 0)    # distortion coefficients
 

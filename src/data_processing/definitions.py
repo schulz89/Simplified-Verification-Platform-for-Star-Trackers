@@ -44,5 +44,6 @@ grid_t = {
 
 sequence_t = {
     "STAR_SIMULATOR" : 0,
-    "REAL_IMAGES"   : 1
+    "ASTERIA"        : 1,
+    "SWARM"          : 2
 }

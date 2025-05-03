@@ -54,6 +54,7 @@ class SingleTest:  # Base class
         self.test_sel = test_t[common_config.test_name]
         self.dut_sel  = dut_t[dut_config.dut_name]
         self.sequence_sel = sequence_t[common_config.sequence_source]
+        print("bin/verification_platform" + " " + str(self.dut_sel) + " " + str(self.test_sel) + " " + str(self.sequence_sel))
         if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.test_sel), str(self.sequence_sel)]) :
         # if subprocess.call(["bin/verification_platform", str(self.dut_sel), str(self.sequence_sel)]), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) :
             exit()

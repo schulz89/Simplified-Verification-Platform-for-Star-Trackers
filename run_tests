@@ -51,12 +51,19 @@ def sim_validation():
     config_dut_list = [ConfigDut(dut_name = "STAR_SIMULATOR_VALIDATION")]
     SingleTest(config_common_list, config_dut_list, False)
 
-def real_images():
-    config_common_list = [ConfigCommon(sequence_source="REAL_IMAGES", op_resolution = (874,738), op_vertical_fov = 9.5, sp_psf_C = 25000, op_max_mag = 4.5)]
+def real_image_asteria():
+    config_common_list = [ConfigCommon(sequence_source="ASTERIA", n_tests = 1, op_resolution = (874,738), op_vertical_fov = 9.5, sp_psf_C = 25000, op_max_mag = 4.5)]
     config_dut_list = [ConfigDut(dut_name = "STAR_TRACKER", cp_threshold=50, cp_relaxed_threshold=45, cp_min_px=5, gp_g=36)]
+    SingleTest(config_common_list, config_dut_list, False)
+
+# SWARM has 2540 images
+def real_images_swarm():
+    config_common_list = [ConfigCommon(sequence_source="SWARM", n_tests = 2540, op_resolution = (752,580), op_vertical_fov = 13.73869049690866, sp_psf_C = 25000, op_max_mag = 5, op_pixel_size = (8.6e-6,8.3e-6))]
+    config_dut_list = [ConfigDut(dut_name = "STAR_TRACKER", cp_threshold=50, cp_relaxed_threshold=45, cp_min_px=3, gp_g=36)]
     SingleTest(config_common_list, config_dut_list, False)
 
 # tests_batch()
 # repr()
-sim_validation()
-real_images()
+# sim_validation()
+# real_image_asteria()
+real_images_swarm()

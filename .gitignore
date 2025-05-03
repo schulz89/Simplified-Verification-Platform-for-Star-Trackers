@@ -1,6 +1,7 @@
 .vscode/
 bin/
 data/
+dataset/
 config/
 hipparcos/
 __pycache__/
