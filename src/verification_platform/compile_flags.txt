@@ -1,0 +1,14 @@
+-x
+c++
+-pipe
+-Wall
+-W
+-fopenmp
+-O2
+-I/usr/include/opencv4
+-I/usr/include/c++/14
+-I/usr/include/c++/14/x86_64-redhat-linux
+-I/usr/include/c++/14/backward
+-I/usr/local/include
+-I/usr/include
+-I.

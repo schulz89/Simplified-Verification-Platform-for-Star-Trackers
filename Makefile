@@ -13,8 +13,8 @@
 # limitations under the License.
 
 BUILD_DIR=bin
-CXX = "ccache g++"
-# CXX = "ccache clang++"
+# CXX = "ccache g++"
+CXX = "ccache clang++"
 
 CXXFLAGS = "-pipe -Wall -W -fopenmp -O2 -I/usr/include/opencv4"
 #CXXFLAGS = "-pipe -Wall -W -fopenmp -O2 -I/usr/include/opencv4 -g"
@@ -25,10 +25,10 @@ all: grid_database verification_platform
 	mkdir -p $(BUILD_DIR)
 
 grid_database:
-	$(MAKE) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/grid_database
+	$(MAKE) CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/grid_database
 
 verification_platform:
-	$(MAKE) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/verification_platform
+	$(MAKE) CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/verification_platform
 
 clean:
 	$(MAKE) clean BUILD_DIR=$(CURDIR)/$(BUILD_DIR) -C src/grid_database
