@@ -5,7 +5,7 @@ The code is currently under development.
 
 ## Compiling and running
 
-Compiling the project with the supplied makefile was tested on Debian 11, with the versions of the dependencies shown in the list of dependencies below.
+Compiling the project with the supplied makefile was tested on Fedora 41, with the versions of the dependencies shown in the list of dependencies below.
 
 Compiling the platform can be done with:
 
@@ -18,12 +18,6 @@ Downloading the star catalog can be done with:
 ./download_hipparcos
 ```
 
-Ensure the Atlas library is being loaded:
-
-```
-export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/atlas/
-```
-
 Then, running the tests can be done with:
 
 ```
@@ -33,8 +27,7 @@ Then, running the tests can be done with:
 ## List of dependencies
 
 * OpenCV (including Python)
-* Atlas
-* Blas
+* OpenBLAS
 * Boost
 * Python
 * NumPy (for Python)
@@ -43,7 +36,7 @@ Then, running the tests can be done with:
 Example of command line for installing on Fedora Linux:
 
 ```
-sudo dnf install opencv-devel python3-opencv atlas atlas-devel openblas blas-devel lapack-devel boost-devel python3-numpy python3-matplotlib
+sudo dnf install opencv-devel python3-opencv openblas-devel boost-devel python3-numpy python3-matplotlib
 ```
 
 ## License

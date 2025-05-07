@@ -21,8 +21,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 extern "C" {
-#include <cblas.h>
-#include <atlas-x86_64-base/clapack.h>
+#include <openblas/cblas.h>
+#include <openblas/lapacke.h>
 }
 
 #include "structures_st.h"

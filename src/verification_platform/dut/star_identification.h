@@ -16,7 +16,7 @@
 #define STAR_IDENTIFICATION_H
 
 extern "C"{
-#include <cblas.h>
+#include <openblas/cblas.h>
 }
 #include <algorithm>
 #include <limits>

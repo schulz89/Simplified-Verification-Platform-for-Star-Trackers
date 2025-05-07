@@ -16,8 +16,6 @@
 # limitations under the License.
 
 import sys
-import os # To export LD_LIBRARY_PATH
-os.environ['LD_LIBRARY_PATH'] = "/usr/lib/x86_64-linux-gnu/atlas/"
 
 sys.path.append("src/data_processing")
 

@@ -59,7 +59,7 @@ Sky AttitudeDetermination::process(Sky identified)
         q.v[1] = b[2][0] - b[0][2];
         q.v[2] = b[0][1] - b[1][0];
         int ipiv[3];
-        clapack_dgesv(CblasRowMajor,3,1,m,3,ipiv,q.v,3); // v will have the solutions (p)
+        LAPACKE_dgesv(LAPACK_COL_MAJOR,3,1,m,3,ipiv,q.v,3); // v will have the solutions (p)
 
         q.r = 1/sqrt(1+cblas_ddot(3,q.v,1,q.v,1)); // quaternion scalar r
         cblas_dscal(3,q.r,q.v,1);                  // quaternion vector v
