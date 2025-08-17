@@ -75,14 +75,14 @@ Ensure you have the required dependencies installed (see [Dependencies](#depende
 
 This simplified platform was tested on **Fedora 41** with significantly reduced dependencies:
 
-| Component | Purpose |
-|-----------|---------|
+| Component                 | Purpose                              |
+| ------------------------- | ------------------------------------ |
 | OpenCV (including Python) | Image processing and computer vision |
-| OpenBLAS | Basic Linear Algebra Subprograms |
-| Boost | C++ libraries |
-| Python | Scripting and data processing |
-| NumPy | Numerical computing for Python |
-| Matplotlib | Plotting library for Python |
+| OpenBLAS                  | Basic Linear Algebra Subprograms     |
+| Boost                     | C++ libraries                        |
+| Python                    | Scripting and data processing        |
+| NumPy                     | Numerical computing for Python       |
+| Matplotlib                | Plotting library for Python          |
 
 ### Installation
 
@@ -98,7 +98,7 @@ The following features from the original platform are not included in this simpl
 
 - **VHDL Simulation**: GHDL integration removed (may be added in future versions)
 - **SystemC Framework**: No longer depends on SystemC/UVM-SystemC
-- **TCP DUT Client**: Hardware-in-the-loop testing capability removed
+- **TCP DUT Client**: Hardware-in-the-loop testing capability removed (may be added in future versions)
 - **Atlas Library**: Replaced with OpenBLAS for simpler setup
 
 ## Contributing
